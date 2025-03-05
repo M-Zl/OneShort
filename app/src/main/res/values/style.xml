@@ -6,4 +6,9 @@
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowIsTranslucent">true</item>
     </style>
+
+    <!-- Floating Action Button을 강제로 원형으로 만드는 스타일 -->
+    <style name="ShapeAppearance.FloatingActionButton" parent="ShapeAppearance.MaterialComponents.SmallComponent">
+        <item name="cornerSize">50%</item>
+    </style>
 </resources>

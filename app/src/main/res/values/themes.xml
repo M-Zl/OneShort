@@ -1,8 +1,13 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.OneShort" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Base.Theme.OneShort" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    </style>
+
+    <!-- 버튼이 원형이 아니라 둥근 사각형처럼 보이는 문제 해결 -->
+    <style name="Widget.Design.FloatingActionButton" parent="Widget.MaterialComponents.FloatingActionButton">
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.FloatingActionButton</item>
     </style>
 
     <style name="Theme.OneShort" parent="Base.Theme.OneShort" />
