@@ -37,16 +37,52 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:contentDescription="일정 추가"
-        android:padding="12dp"
+        android:padding="24dp"
         android:scaleType="center"
         android:src="@drawable/ic_add_white"
         app:backgroundTint="@color/black"
         app:fabSize="normal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recycler_schedule"
         app:shapeAppearance="?attr/shapeAppearanceSmallComponent"
         app:tint="@null" />
 
+    <!-- 배경 어둡게 처리하는 투명한 뷰 -->
+    <View
+        android:id="@+id/dim_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#99000000"
+        android:visibility="gone"/> <!-- 기본적으로 숨김 -->
+
+    <!-- 신규 일정 등록 메뉴 -->
+    <LinearLayout
+        android:id="@+id/new_schedule_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/rounded_background"
+        android:elevation="8dp"
+        android:padding="12dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/fab_add"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="📅 신규 일정 등록"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="📝 Test"
+            android:textSize="14sp"/>
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
