@@ -32,6 +32,8 @@ class MainActivity : AppCompatActivity() {
 
         fabAdd.setOnClickListener {
             toggleMenu()
+            val intent = Intent(this, AddScheduleActivity::class.java)
+            startActivity(intent)
         }
 
         // 배경을 클릭하면 메뉴 닫기
