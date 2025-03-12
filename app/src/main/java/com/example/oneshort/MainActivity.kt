@@ -11,8 +11,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.LinearLayoutManager
 
-
-
 class MainActivity : AppCompatActivity() {
     private lateinit var fabAdd: FloatingActionButton
     private lateinit var dimBackground: View
@@ -32,8 +30,6 @@ class MainActivity : AppCompatActivity() {
 
         fabAdd.setOnClickListener {
             toggleMenu()
-            val intent = Intent(this, AddScheduleActivity::class.java)
-            startActivity(intent)
         }
 
         // 배경을 클릭하면 메뉴 닫기
@@ -45,6 +41,7 @@ class MainActivity : AppCompatActivity() {
         newScheduleMenu.setOnClickListener {
             val intent = Intent(this, AddScheduleActivity::class.java)
             startActivity(intent)
+            closeMenu() // 🔥 신규 일정 화면으로 이동할 때 메뉴 닫기
         }
 
         recyclerView = findViewById(R.id.recycler_schedule)
@@ -67,6 +64,15 @@ class MainActivity : AppCompatActivity() {
         scheduleList.add(Schedule("회의 참석", "2025년 2월 27일"))
 
         scheduleAdapter.notifyDataSetChanged()
+    }
+
+    // 🔹 **뒤로가기 버튼 눌렀을 때 동작 수정**
+    override fun onBackPressed() {
+        if (isMenuOpen) {
+            closeMenu() // 🔥 메뉴가 열려 있으면 닫기
+        } else {
+            super.onBackPressed() // 기본 뒤로가기 동작 실행
+        }
     }
 
     private fun toggleMenu() {
