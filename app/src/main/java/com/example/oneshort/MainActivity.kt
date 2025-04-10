@@ -4,18 +4,25 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.oneshort.data.RetrofitClient
+import com.example.oneshort.data.Schedule
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import com.example.oneshort.ScheduleAdapter
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity() {
     private lateinit var fabAdd: FloatingActionButton
     private lateinit var dimBackground: View
     private lateinit var newScheduleMenu: LinearLayout
-    private var isMenuOpen = false  // 메뉴 상태 변수
+    private var isMenuOpen = false
     private lateinit var recyclerView: RecyclerView
     private lateinit var scheduleAdapter: ScheduleAdapter
     private val scheduleList = mutableListOf<Schedule>()
@@ -32,24 +39,20 @@ class MainActivity : AppCompatActivity() {
             toggleMenu()
         }
 
-        // 배경을 클릭하면 메뉴 닫기
         dimBackground.setOnClickListener {
             closeMenu()
         }
 
-        // 신규 일정 등록 메뉴에서 일정 추가 버튼 클릭 시 새로운 화면으로 이동
         newScheduleMenu.setOnClickListener {
             val intent = Intent(this, AddScheduleActivity::class.java)
             startActivity(intent)
-            closeMenu() // 🔥 신규 일정 화면으로 이동할 때 메뉴 닫기
+            closeMenu()
         }
 
         recyclerView = findViewById(R.id.recycler_schedule)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        // RecyclerView 어댑터 설정
         scheduleAdapter = ScheduleAdapter(scheduleList) { schedule ->
-            // 클릭한 일정 정보를 EditScheduleActivity로 전달
             val intent = Intent(this, EditScheduleActivity::class.java).apply {
                 putExtra("SCHEDULE_TITLE", schedule.title)
                 putExtra("SCHEDULE_DATE", schedule.date)
@@ -59,19 +62,38 @@ class MainActivity : AppCompatActivity() {
 
         recyclerView.adapter = scheduleAdapter
 
-        // 일정 데이터 샘플 추가 (테스트용)
-        scheduleList.add(Schedule("장미랑 커피 마시기", "2025년 2월 26일"))
-        scheduleList.add(Schedule("회의 참석", "2025년 2월 27일"))
-
-        scheduleAdapter.notifyDataSetChanged()
+        // 🔹 🔄 서버에서 오늘 일정 불러오기 호출 위치
+        loadTodaySchedules()
     }
 
-    // 🔹 **뒤로가기 버튼 눌렀을 때 동작 수정**
+    private fun loadTodaySchedules() {
+        RetrofitClient.scheduleApi.getTodaySchedules(1).enqueue(object : Callback<List<Schedule>> {
+            override fun onResponse(
+                call: Call<List<Schedule>>,
+                response: Response<List<Schedule>>
+            ) {
+                if (response.isSuccessful) {
+                    val schedules = response.body() ?: emptyList()
+                    scheduleList.clear()
+                    scheduleList.addAll(schedules)
+                    scheduleAdapter.notifyDataSetChanged()
+                    Log.d("스케줄", "받은 일정 목록: $schedules")
+                } else {
+                    Log.e("스케줄", "응답 실패: ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<List<Schedule>>, t: Throwable) {
+                Log.e("스케줄", "서버 연결 실패: ${t.message}")
+            }
+        })
+    }
+
     override fun onBackPressed() {
         if (isMenuOpen) {
-            closeMenu() // 🔥 메뉴가 열려 있으면 닫기
+            closeMenu()
         } else {
-            super.onBackPressed() // 기본 뒤로가기 동작 실행
+            super.onBackPressed()
         }
     }
 
@@ -84,18 +106,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openMenu() {
-        fabAdd.setImageResource(R.drawable.ic_close) // `X` 아이콘으로 변경
-        fabAdd.backgroundTintList = ColorStateList.valueOf(Color.WHITE) // 배경 화이트
-        dimBackground.visibility = View.VISIBLE // 배경 어둡게
-        newScheduleMenu.visibility = View.VISIBLE // 신규 일정 메뉴 표시
+        fabAdd.setImageResource(R.drawable.ic_close)
+        fabAdd.backgroundTintList = ColorStateList.valueOf(Color.WHITE)
+        dimBackground.visibility = View.VISIBLE
+        newScheduleMenu.visibility = View.VISIBLE
         isMenuOpen = true
     }
 
     private fun closeMenu() {
-        fabAdd.setImageResource(R.drawable.ic_add_white) // `+` 아이콘으로 변경
-        fabAdd.backgroundTintList = ColorStateList.valueOf(Color.BLACK) // 배경 블랙
-        dimBackground.visibility = View.GONE // 배경 원래대로
-        newScheduleMenu.visibility = View.GONE // 신규 일정 메뉴 숨김
+        fabAdd.setImageResource(R.drawable.ic_add_white)
+        fabAdd.backgroundTintList = ColorStateList.valueOf(Color.BLACK)
+        dimBackground.visibility = View.GONE
+        newScheduleMenu.visibility = View.GONE
         isMenuOpen = false
     }
 }

@@ -5,9 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-
-// 일정 데이터 클래스
-data class Schedule(val title: String, val date: String)
+import com.example.oneshort.data.Schedule
 
 class ScheduleAdapter(private var scheduleList: MutableList<Schedule>, private val onItemClick: (Schedule) -> Unit) :
     RecyclerView.Adapter<ScheduleAdapter.ViewHolder>() {
